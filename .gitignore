@@ -1,0 +1,7 @@
+.metals/
+.idea/
+.bsp/
+.vscode/
+.bloop/
+target/
+dist/*

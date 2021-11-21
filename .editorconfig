@@ -1,0 +1,28 @@
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = false
+trim_trailing_whitespace = true
+indent_style = tab
+tab_width = 4
+
+[*.{yaml,yml}]
+indent_style = space
+indent_size = 2
+
+[*.{scala,sbt}]
+indent_style = space
+indent_size = 2
+ij_scala_blank_lines_around_method = 0
+ij_scala_blank_lines_around_method_in_inner_scopes = 0
+ij_scala_blank_lines_around_method_in_interface = 0
+ij_scala_blank_lines_around_class = 0
+ij_scala_blank_lines_around_class_in_inner_scopes = 0
+ij_scala_keep_simple_blocks_in_one_line = true
+ij_scala_keep_one_line_lambdas_in_arg_list = true
+ij_scala_keep_simple_methods_in_one_line = true
+ij_scala_align_multiline_parameters = false
+
+[*.sql]
+indent_style = space
+indent_size = 2
