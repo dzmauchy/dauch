@@ -1,16 +1,17 @@
-ThisBuild / scalaVersion := "2.13.7"
+val scalaVer = "3.1.1"
+
+ThisBuild / scalaVersion := scalaVer
 ThisBuild / version := "0.1"
 ThisBuild / organization := "dauch.org"
 
-lazy val maridCommon = crossProject(JVMPlatform, JSPlatform)
-  .crossType(CrossType.Full)
-  .in(file("marid") / "common")
+import Dependencies._
+
+lazy val ide = project
+  .in(file("ide"))
   .settings(
-    name := "common",
+    name := "ide",
     libraryDependencies := Seq(
-      "com.typesafe.play" %%% "play-json" % "2.10.0-RC5"
+      "org.scala-lang" %% "scala3-compiler" % scalaVer,
+      "org.openjfx" % "javafx-controls" % javafxVersion
     )
   )
-
-lazy val dauch = project.in(file("."))
-  .aggregate(maridCommon.js, maridCommon.jvm)

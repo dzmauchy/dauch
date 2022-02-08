@@ -10,9 +10,11 @@ object BuildPlugin extends AutoPlugin {
 
   override def projectSettings: Seq[Def.Setting[_]] = Seq(
     scalacOptions := Seq(
-      "-target:16",
-      "-Xsource:3",
-      "-opt:l:method"
+      "-no-indent",
+      "--deprecation",
+      "--release:17",
+      "-old-syntax",
+      "-Werror"
     )
   )
 }
