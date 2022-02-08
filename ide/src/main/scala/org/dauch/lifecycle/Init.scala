@@ -6,8 +6,8 @@ trait Init[-T <: AnyRef] {
 
 object Init {
 
-  final val Empty: Init[Nothing] = _ => ()
+  final val Empty: Init[AnyRef] = _ => ()
 
   inline given Init[Thread] = _.start()
-  inline given Init[?] = Empty
+  inline given Init[AnyRef] = Empty
 }

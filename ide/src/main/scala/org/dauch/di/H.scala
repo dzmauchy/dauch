@@ -2,15 +2,7 @@ package org.dauch.di
 
 import org.dauch.lifecycle.{Init, Stop}
 
-import scala.annotation.unchecked.uncheckedVariance
-
-final class H[+T <: AnyRef](
-  module: Module,
-  name: String,
-  v: => T,
-  init: Init[T],
-  stop: Stop[T]
-) extends AutoCloseable {
+final class H[+T <: AnyRef](val name: String, v: => T, init: Init[T], stop: Stop[T]) {
 
   @volatile private var value: Option[T] = _
 
@@ -27,19 +19,18 @@ final class H[+T <: AnyRef](
                 pv
               } catch {
                 case e: Throwable =>
-                  module.close0(new IllegalStateException(s"Unable to start ${module.name}.$name", e))
-                  throw e
+                  throw new IllegalStateException(s"Unable to start $name", e)
               }
             case Some(v) => v
-            case None => throw new IllegalStateException(s"Closed ${module.name}.$name")
+            case None => throw new IllegalStateException(s"Closed $name")
           }
         }
       case Some(v) => v
-      case None => throw new IllegalStateException(s"Closed ${module.name}.$name")
+      case None => throw new IllegalStateException(s"Closed $name")
     }
   }
 
-  def close(): Unit = value match {
+  private[di] def close(): Unit = value match {
     case null =>
     case Some(v) =>
       synchronized {

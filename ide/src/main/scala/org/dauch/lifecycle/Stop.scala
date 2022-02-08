@@ -17,7 +17,7 @@ trait Stop[-T <: AnyRef] {
 
 object Stop {
 
-  final val Empty: Stop[Nothing] = _ => ()
+  final val Empty: Stop[AnyRef] = _ => ()
 
   inline given Stop[Thread] = Stops.stop(_)
   inline given Stop[ExecutorService] = Stops.stop(_)
@@ -28,5 +28,5 @@ object Stop {
   inline given Stop[TimerTask] = _.cancel()
   inline given Stop[ScheduledFuture[?]] = Stops.stop(_)
   inline given Stop[AutoCloseable] = _.close()
-  inline given Stop[?] = Empty
+  inline given Stop[AnyRef] = Empty
 }

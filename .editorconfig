@@ -22,6 +22,7 @@ ij_scala_keep_simple_blocks_in_one_line = true
 ij_scala_keep_one_line_lambdas_in_arg_list = true
 ij_scala_keep_simple_methods_in_one_line = true
 ij_scala_align_multiline_parameters = false
+ij_scala_place_self_type_on_new_line = false
 
 [*.sql]
 indent_style = space
