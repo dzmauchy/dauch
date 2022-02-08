@@ -61,8 +61,8 @@ object ModuleSpec {
     trait B
 
     trait T1 { this: TestModule1 =>
-      given t11: H[Closeable & A] = bind("T11")(new Closeable({ queue = queue.appended("c11") }) with A {})
-      given t12: H[Closeable & B] = bind("T12")(new Closeable({ queue = queue.appended("c12") }) with B {})
+      given t11: H[Closeable & A] = bind("T11")(new Closeable({ queue = queue.appended("c11") }) with A)
+      given t12: H[Closeable & B] = bind("T12")(new Closeable({ queue = queue.appended("c12") }) with B)
       locally {
         init(t11)
         init(t12)
@@ -70,8 +70,8 @@ object ModuleSpec {
     }
 
     trait T2 extends T1 { this: TestModule1 =>
-      given t21: H[Closeable & A] = bind("T11")(new Closeable({ queue = queue.appended("c21") }) with A {})
-      given t22: H[Closeable & B] = bind("T12")(new Closeable({ queue = queue.appended("c22") }) with B {})
+      given t21: H[Closeable & A] = bind("T11")(new Closeable({ queue = queue.appended("c21") }) with A)
+      given t22: H[Closeable & B] = bind("T12")(new Closeable({ queue = queue.appended("c22") }) with B)
       locally {
         init(t21)
         init(t22)
