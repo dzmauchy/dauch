@@ -106,7 +106,7 @@ object ModuleSpec {
       }
     }
 
-    class Service2()(using s1: Service1) extends AutoCloseable with HasInit {
+    class Service2(using s1: Service1) extends AutoCloseable with HasInit {
       override def init(): Unit = {
         inits = inits appended "s2"
       }
@@ -118,7 +118,7 @@ object ModuleSpec {
 
     final class TestModule extends Module("test") {
       given s1: H[Service1] = bind("s1")(new Service1)
-      given s2: H[Service2] = bind("s2")(new Service2())
+      given s2: H[Service2] = bind("s2")(new Service2)
       locally {
         init(s2)
       }
