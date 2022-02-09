@@ -9,5 +9,6 @@ object Init {
   final val Empty: Init[AnyRef] = _ => ()
 
   inline given Init[Thread] = _.start()
+  inline given Init[HasInit] = _.init()
   inline given Init[AnyRef] = Empty
 }

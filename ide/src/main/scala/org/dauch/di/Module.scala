@@ -3,7 +3,6 @@ package org.dauch.di
 import org.dauch.lifecycle.{Init, Stop}
 
 import scala.collection.immutable.Queue
-import scala.{Function, PartialFunction}
 
 class Module(final val name: String) extends AutoCloseable {
 
@@ -11,9 +10,13 @@ class Module(final val name: String) extends AutoCloseable {
   private final var inits = Queue.empty[Runnable]
 
   def bind[T <: AnyRef : Init : Stop](name: String)(s: => T): H[T] = {
-    val h = new H(name, s, summon[Init[T]], summon[Stop[T]])
-    synchronized(hs ::= h)
-    h
+    var ref: H[T] = null
+    val init: Init[T] = o => {
+      synchronized(hs ::= ref)
+      summon[Init[T]].initialize(o)
+    }
+    ref = new H(name, s, init, summon[Stop[T]])
+    ref
   }
 
   def init(h: H[?]): Unit = synchronized {
@@ -60,7 +63,8 @@ class Module(final val name: String) extends AutoCloseable {
 
   override def toString: String = name
 
-  inline given[T <: AnyRef]: Conversion[H[T], T] = h => try h.get() catch {
+  inline given[T <: AnyRef]: Conversion[H[T], T] = h => h2t(using h)
+  given h2t[T <: AnyRef](using h: H[T]): T = try h.get() catch {
     case e: Throwable => throw new IllegalStateException(s"Unable to get $name.${h.name}", e)
   }
 }
