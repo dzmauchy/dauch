@@ -54,7 +54,7 @@ object ModuleSpec {
       }
     }
 
-    final class TestModule1 extends Module("test") with T1 with T2 {
+    final class TestModule1 extends HModule("test") with T1 with T2 {
       private[di] var queue = Queue.empty[String]
     }
   }
@@ -86,7 +86,7 @@ object ModuleSpec {
       }
     }
 
-    final class TestModule1 extends Module("test") with T1 with T2 {
+    final class TestModule1 extends HModule("test") with T1 with T2 {
       private[di] var queue = Queue.empty[String]
     }
   }
@@ -116,7 +116,7 @@ object ModuleSpec {
       }
     }
 
-    final class TestModule extends Module("test") {
+    final class TestModule extends HModule("test") {
       given s1: H[Service1] = bind("s1")(new Service1)
       given s2: H[Service2] = bind("s2")(new Service2)
       locally {

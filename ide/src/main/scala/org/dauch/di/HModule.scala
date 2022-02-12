@@ -4,7 +4,7 @@ import org.dauch.lifecycle.{Init, Stop}
 
 import scala.collection.immutable.Queue
 
-class Module(final val name: String) extends AutoCloseable {
+class HModule(final val name: String) extends AutoCloseable {
 
   private final var hs = List.empty[H[?]]
   private final var inits = Queue.empty[Runnable]

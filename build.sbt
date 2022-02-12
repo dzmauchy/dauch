@@ -10,8 +10,11 @@ lazy val ide = project
   .in(file("ide"))
   .settings(
     name := "ide",
+    fork := true,
     libraryDependencies ++= Seq(
       "org.scala-lang" %% "scala3-compiler" % scalaVer,
-      "org.openjfx" % "javafx-controls" % javafxVersion
+      "org.openjfx" % "javafx-controls" % javafxVersion,
+      "org.openjfx" % "javafx-media" % javafxVersion,
+      "org.openjfx" % "javafx-swing" % javafxVersion
     )
   )
