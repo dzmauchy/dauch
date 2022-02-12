@@ -19,6 +19,7 @@ object Stop {
 
   final val Empty: Stop[AnyRef] = _ => ()
 
+  inline given Stop[HasStop] = _.stop()
   inline given Stop[Thread] = Stops.stop(_)
   inline given Stop[ExecutorService] = Stops.stop(_)
   inline given Stop[Dialog[?]] = d => if (isFxApplicationThread) d.close() else runLater(() => d.close())
