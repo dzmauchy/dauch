@@ -7,3 +7,5 @@
  */
 
 rootProject.name = "dauch"
+
+include("ide")
