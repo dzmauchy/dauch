@@ -27,3 +27,22 @@ tasks.named<Test>("test") {
 		events("passed", "skipped", "failed")
 	}
 }
+
+tasks.withType<ScalaCompile>().configureEach {
+	scalaCompileOptions.apply {
+		isForce = true
+		isFailOnError = true
+		isUnchecked = true
+		additionalParameters = listOf(
+			"-no-indent"
+		)
+
+		forkOptions.apply {
+			memoryMaximumSize = "2g"
+		}
+	}
+}
+
+scala {
+	zincVersion = "1.9.6"
+}
