@@ -8,4 +8,6 @@
 
 rootProject.name = "dauch"
 
+include("lib")
+include("di")
 include("ide")

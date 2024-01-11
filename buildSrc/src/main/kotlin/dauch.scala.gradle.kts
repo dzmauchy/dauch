@@ -34,7 +34,8 @@ tasks.withType<ScalaCompile>().configureEach {
 		isFailOnError = true
 		isUnchecked = true
 		additionalParameters = listOf(
-			"-no-indent"
+			"-no-indent",
+			"-release", "21"
 		)
 
 		forkOptions.apply {
