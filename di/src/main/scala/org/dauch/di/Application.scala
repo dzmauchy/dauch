@@ -4,28 +4,33 @@ import org.dauch.di.exception.{ApplicationCloseException, BeanEventPublishingExc
 
 final class Application(val id: String) extends AutoCloseable {
 
-  private var modules = List.empty[Module]
-  private var eventConsumers = List.empty[(String, String, String, EventConsumer)]
+  private[di] var modules = List.empty[Context]
+  private[di] var eventConsumers = List.empty[(String, String, EventConsumer)]
 
-  private[di] def add(mod: String, ctx: String, id: String, c: EventConsumer): Unit = synchronized {
-    eventConsumers = (mod, ctx, id, c) :: eventConsumers
+  private[di] def add(mod: String, id: String, c: EventConsumer): Unit = synchronized {
+    eventConsumers = (mod, id, c) :: eventConsumers
   }
 
-  private[di] def add(mod: Module): Unit = synchronized {
+  private[di] def add(mod: Context): Unit = synchronized {
     modules = mod :: modules
   }
 
-  private[di] def remove(mod: Module): Unit = synchronized {
+  private[di] def remove(mod: Context): Unit = synchronized {
     modules = modules.filterNot(_ eq mod)
+  }
+  
+  def start(): Unit = {
+    val ms = synchronized(modules.reverse)
+    for (m <- ms) m.start()
   }
 
   def publish(ev: AnyRef): Unit = {
     val ex = EventPublishingException()
-    for ((mod, ctx, id, c) <- eventConsumers) {
+    for ((mod, id, c) <- eventConsumers) {
       try {
         c.consume(ev)
       } catch {
-        case e: Throwable => ex.addSuppressed(BeanEventPublishingException(this.id, mod, ctx, id, e))
+        case e: Throwable => ex.addSuppressed(BeanEventPublishingException(this.id, mod, id, e))
       }
     }
     if (ex.getSuppressed.nonEmpty) throw ex
