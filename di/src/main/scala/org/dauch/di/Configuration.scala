@@ -9,12 +9,15 @@ trait Configuration(using val mod: Context) {
       val bean = f
       bean match {
         case c: AutoCloseable => mod.add(id, c)
+        case _ =>
       }
       bean match {
         case i: Initializable => i.init()
+        case _ =>
       }
       bean match {
         case c: EventConsumer => mod.add(id, c)
+        case _ =>
       }
       bean
     } catch {
@@ -28,9 +31,9 @@ trait Configuration(using val mod: Context) {
         throw ex
     }
   }
-  
+
   def register(c: => AnyRef): Unit = mod.addEager(() => c)
-  
+
   protected def eagerBeans(): Unit = {
   }
 }
