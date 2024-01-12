@@ -2,40 +2,39 @@ package org.dauch.di
 
 import org.dauch.di.exception.{BeanCloseException, BeanEventPublishingException, EventPublishingException, ModuleCloseException}
 
-final class Module(val id: String)(using val app: Application) {
+final class Module(val id: String)(using val app: Application) extends AutoCloseable {
 
   private var disposables = List.empty[(String, String, AutoCloseable)]
   private var eventConsumers = List.empty[(String, String, EventConsumer)]
 
+  app.add(this)
+
   def publish(ev: AnyRef): Unit = {
-    var errors = Vector.empty[Throwable]
+    val ex = EventPublishingException()
     for ((ctx, id, c) <- eventConsumers) {
       try {
         c.consume(ev)
       } catch {
-        case e: Throwable => errors = errors.appended(BeanEventPublishingException(app.id, this.id, ctx, id, e))
+        case e: Throwable => ex.addSuppressed(BeanEventPublishingException(app.id, this.id, ctx, id, e))
       }
     }
-    if (errors.nonEmpty) {
-      val ex = EventPublishingException()
-      errors.foreach(ex.addSuppressed)
-      throw ex
-    }
+    if (ex.getSuppressed.nonEmpty) throw ex
   }
 
-  private[di] def add(ctx: Context, id: String, c: AutoCloseable): Unit = synchronized {
+  private[di] def add(ctx: Configuration, id: String, c: AutoCloseable): Unit = synchronized {
     disposables = (ctx.id, id, c) :: disposables
   }
 
-  private[di] def add(ctx: Context, id: String, c: EventConsumer): Unit = {
+  private[di] def add(ctx: Configuration, id: String, c: EventConsumer): Unit = {
     app.add(id, ctx.id, id, c)
     synchronized {
       eventConsumers = (ctx.id, id, c) :: eventConsumers
     }
   }
 
-  private[di] def close(): Unit = {
-    var errors = Vector.empty[Throwable]
+  override def close(): Unit = {
+    app.remove(this)
+    val ex = ModuleCloseException(app.id, id)
     synchronized {
       while (disposables.nonEmpty) {
         disposables = disposables match {
@@ -43,17 +42,13 @@ final class Module(val id: String)(using val app: Application) {
             try {
               c.close()
             } catch {
-              case e: Throwable => errors = errors.appended(BeanCloseException(ctx, id, e))
+              case e: Throwable => ex.addSuppressed(BeanCloseException(ctx, id, e))
             }
             t
           case Nil => Nil
         }
       }
     }
-    if (errors.nonEmpty) {
-      val ex = ModuleCloseException(app.id, id)
-      errors.foreach(ex.addSuppressed)
-      throw ex
-    }
+    if (ex.getSuppressed.nonEmpty) throw ex
   }
 }
